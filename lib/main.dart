@@ -3,7 +3,7 @@ import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:s3_storage/s3_storage.dart';
+import 'package:minio_flutter/minio.dart';
 
 void main() {
   runApp(const MyApp());
@@ -57,7 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     /// S3 storage client
-    final s3storage = S3Storage(
+    final client = Minio.init(
       endPoint: 's3.tebi.io',
       // signingType: SigningType.V2,
       accessKey: 'UwW00p7962ypmQDX',
@@ -67,9 +67,15 @@ class _MyHomePageState extends State<MyHomePage> {
     /// File data as a stream of Uint8List
     Stream<Uint8List> fileData = pickedFile.readAsBytes().asStream();
 
+    /// File name
+    String fileName = (pickedFilePath ?? '').split('/').last;
+
     /// Upload the file and get the eTag
-    String eTagLocal =
-        await s3storage.putObject('lesa', 'example.png', fileData);
+    String eTagLocal = await client.putObject(
+      'lesa',
+      'rentals/23_companyname/$fileName',
+      fileData,
+    );
     setState(() {
       eTag = eTagLocal;
     });

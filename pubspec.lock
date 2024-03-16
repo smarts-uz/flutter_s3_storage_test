@@ -132,10 +132,10 @@ packages:
     dependency: transitive
     description:
       name: http
-      sha256: "5895291c13fa8a3bd82e76d5627f69e0d85ca6a30dcac95c4ea19a5d555879c2"
+      sha256: "761a297c042deedc1ffbb156d6e2af13886bb305c2a343a4d972504cd67dd938"
       url: "https://pub.dev"
     source: hosted
-    version: "0.13.6"
+    version: "1.2.1"
   http_parser:
     dependency: transitive
     description:
@@ -216,6 +216,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.5"
+  minio_flutter:
+    dependency: "direct main"
+    description:
+      name: minio_flutter
+      sha256: d5234da9a27e387a4db7fdb78354df88c12bca09e63fbf9aa5c0505fa44bf3a1
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.1"
   path:
     dependency: transitive
     description:
@@ -240,14 +248,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.8"
-  s3_storage:
-    dependency: "direct main"
-    description:
-      name: s3_storage
-      sha256: "88fdd65984f1550dc0aa63aee1fc6daa8d1c237e59ff39bc87b50ccc6c49692a"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.4"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -325,6 +325,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "13.0.0"
+  web:
+    dependency: transitive
+    description:
+      name: web
+      sha256: "97da13628db363c635202ad97068d47c5b8aa555808e7a9411963c533b449b27"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.5.1"
   win32:
     dependency: transitive
     description:
