@@ -35,7 +35,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<String> eTags = [];
+  List<String?> eTags = [];
   List<String> publicUrls = [];
 
   /// Pick a file and upload to tebi
@@ -59,11 +59,14 @@ class _MyHomePageState extends State<MyHomePage> {
       Stream<List<int>>? fileData = file.readStream;
       if (fileData == null) continue;
 
-      String fileName = file.name.replaceAll(' ', '_');
+      String fileName = file.name
+          .replaceAll(' ', '_')
+          .replaceAll('(', '')
+          .replaceAll(')', '');
       String object = 'rentals/payments/$fileName';
 
       /// Upload the file and get the eTag
-      String eTagLocal = await client.putObject(
+      String? eTagLocal = await client.putObject(
         'lesa',
         object,
         fileData.cast<Uint8List>(),
