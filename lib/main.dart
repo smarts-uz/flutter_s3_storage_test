@@ -1,9 +1,8 @@
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:minio_flutter/minio.dart';
+import 'package:minio/minio.dart';
 
 void main() {
   runApp(const MyApp());
@@ -36,50 +35,48 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String? pickedFilePath;
-  String? eTag;
+  List<String> eTags = [];
+  List<String> publicUrls = [];
 
   /// Pick a file and upload to tebi
   Future<void> uploadFile() async {
     /// File picker
-    File? pickedFile;
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
-
-    if (result != null) {
-      /// Get the file path when picked
-      setState(() {
-        pickedFilePath = result.files.single.path!;
-      });
-      pickedFile = File(pickedFilePath!);
-    } else {
-      /// User canceled the picker
-      return;
-    }
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      allowMultiple: true,
+      // withData: true,
+      withReadStream: true,
+      readSequential: true,
+    );
 
     /// S3 storage client
-    final client = Minio.init(
+    final client = Minio(
       endPoint: 's3.tebi.io',
-      // signingType: SigningType.V2,
-      accessKey: 'UwW00p7962ypmQDX',
-      secretKey: 'Hyvf89c9OHBUNReWXpURStrGCfybCHU2HBNLoTaU',
+      accessKey: 'FhdJ0RbGcUurmHap',
+      secretKey: '1ttRgDwGBYgIj9GX2O2ZzcPSwtQluAdO9DN1QBeq',
     );
+    if (result == null) return;
+    for (var file in result.files) {
+      Stream<List<int>>? fileData = file.readStream;
+      if (fileData == null) continue;
 
-    /// File data as a stream of Uint8List
-    Stream<Uint8List> fileData = pickedFile.readAsBytes().asStream();
+      String fileName = file.name.replaceAll(' ', '_');
+      String object = 'rentals/payments/$fileName';
 
-    /// File name
-    String fileName = (pickedFilePath ?? '').split('/').last;
-
-    /// Upload the file and get the eTag
-    String eTagLocal = await client.putObject(
-      'lesa',
-      'rentals/23_companyname/$fileName',
-      fileData,
-    );
-    setState(() {
-      eTag = eTagLocal;
-    });
-    debugPrint(eTag);
+      /// Upload the file and get the eTag
+      String eTagLocal = await client.putObject(
+        'lesa',
+        object,
+        fileData.cast<Uint8List>(),
+      );
+      String publicUrl = 'https://s3.tebi.io/lesa/$object';
+      setState(() {
+        eTags.add(eTagLocal);
+        publicUrls.add(publicUrl);
+      });
+      debugPrint(fileName);
+      debugPrint(eTagLocal);
+      debugPrint(publicUrl);
+    }
   }
 
   @override
@@ -92,8 +89,9 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         child: Column(
           children: [
-            Text(pickedFilePath.toString()),
-            Text(eTag.toString()),
+            Text(eTags.toString()),
+            const Divider(),
+            Text(publicUrls.toString()),
           ],
         ),
       ),
